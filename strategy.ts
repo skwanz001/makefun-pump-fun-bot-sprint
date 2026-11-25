@@ -1,3 +1,35 @@
+// How this bot trades, in plain words.
+//
+// The core idea is to wait for proof before spending anything. A new coin
+// on the pump.fun curve starts out worthless and unproven, so this bot does
+// not buy early and hope. It waits until the coin's real SOL reserves climb
+// through 30 from below. That crossing matters because it means real buyers
+// have already put meaningful money in: the curve has survived its first
+// minutes and shown it can attract demand. Buying the crossing instead of
+// the launch keeps the bot out of the thousands of coins that never get
+// anywhere, and it skips the fee bleed of sniping everything at birth.
+//
+// Once in, the bot sells the whole position when it is up 50%. Taking the
+// full profit at one clear level is deliberate: these coins peak fast and
+// give the gains back just as fast, so waiting for a bigger move usually
+// ends in a round trip to zero. Locking in +50% turns a good crossing into
+// a banked win instead of a story about a coin that almost made it.
+//
+// If the coin dips back below the line and then crosses 30 again, the bot
+// buys once more. A second crossing is not the same as the first one
+// failing: it means fresh buyers returned and pushed the coin through the
+// level a second time, which is a new signal, not a repeat of the old one.
+// That is why the bot allows one re-entry per coin and no more — a third
+// crossing would just be churning the same coin.
+//
+// The 0.02 SOL probe exists for a different reason. Some windows are so
+// quiet that no coin crosses at all, and the entry rules still require a
+// minimum number of round trips. The probe is a tiny buy-and-sell on a
+// live coin, just big enough to count as a real trade after fees, so the
+// bot keeps meeting that minimum even when the main signal stays silent.
+// It is deliberately small because its job is to keep the run valid,
+// not to make money on its own.
+//
 // Crossing chaser v2 for the pump.fun bonding-curve replay (agent-fun/replay/v2).
 //
 // What the dev window (24h, 1222 coins, 35 completions) taught the previous
